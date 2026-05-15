@@ -726,12 +726,13 @@ int main()
                 auto& cam = cameras[i];
                 ConfigureCamera(cam, targetFps, exp, sessionLog);
                 auto timing = SetupTiming(cam, sessionLog);
-                double actualFps = ReadActualFps(cam, targetFps);
-                
+                // REMOVED: double actualFps = ReadActualFps(cam, targetFps);
+    
                 std::string name = "Cam" + std::to_string(i+1);
                 recorders.push_back(std::make_unique<CameraRecorder>(
                     cam, name, recDir / (name + ".avi"), recDir / (name + "_times.csv"), 
-                    recDir / (name + ".log"), recDir / (name + "_meta.json"), actualFps, timing));
+                    recDir / (name + ".log"), recDir / (name + "_meta.json"), targetFps, timing));
+                    // CHANGED: actualFps -> targetFps
             }
 
             std::cout << "\nRecording to " << recDir << ". Press 'q' in console to stop.\n\n";
