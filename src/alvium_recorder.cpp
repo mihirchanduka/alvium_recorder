@@ -40,7 +40,7 @@ namespace {
 constexpr int kBufferCount = 128;
 constexpr int kPreviewPollMs = 1;
 constexpr int kDefaultDurationSeconds = 30;
-constexpr double kDefaultFps = 68.0;
+constexpr double kDefaultFps = 30.0;
 constexpr double kFallbackExposureUs = 3000.0;
 constexpr std::size_t kMaxQueuedFrames = 1024;
 constexpr std::uint64_t kPeriodicLogFrames = 60;
@@ -598,7 +598,9 @@ private:
         std::size_t qLen = (s.receivedFrames - s.writtenFrames);
         double qPressure = (static_cast<double>(qLen) / kMaxQueuedFrames) * 100.0;
         
+        int elapsedS = static_cast<int>(elapsed);
         std::cout << "\r" << m_windowName << ": "
+                  << "elapsed=" << std::setw(3) << (elapsedS / 60) << "m" << std::setw(2) << std::setfill('0') << (elapsedS % 60) << "s" << std::setfill(' ') << " "
                   << "frame=" << std::setw(6) << s.writtenFrames << " "
                   << "fps=" << std::fixed << std::setprecision(1) << std::setw(5) << curFps << " "
                   << "buf=" << std::setw(3) << static_cast<int>(qPressure) << "% "
@@ -713,7 +715,7 @@ int main()
         }
 
         for (;;) {
-            double targetFps = PromptValue<double>("Target FPS", kDefaultFps);
+            constexpr double targetFps = kDefaultFps; // hard-coded: USB bandwidth limit
             int duration = PromptValue<int>("Duration (s)", kDefaultDurationSeconds);
             double exp = PromptValue<double>("Exposure (us)", ReadCurrentExposureUs(cameras[0], kFallbackExposureUs));
 
